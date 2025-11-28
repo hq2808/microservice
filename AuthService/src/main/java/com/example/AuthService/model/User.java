@@ -15,8 +15,9 @@ import java.util.UUID;
 public class User {
 
     @Id
+    @GeneratedValue(generator = "UUID")
     @Column(columnDefinition = "uuid", updatable = false, nullable = false)
-    private UUID id = UUID.randomUUID();
+    private UUID id;
 
     @Column(unique = true, nullable = false)
     private String username;
@@ -45,5 +46,12 @@ public class User {
     @PreUpdate
     public void onUpdate() {
         this.updatedAt = LocalDateTime.now();
+    }
+
+    @PrePersist
+    public void onCreate() {
+        LocalDateTime now = LocalDateTime.now();
+        this.createdAt = now;
+        this.updatedAt = now;
     }
 }

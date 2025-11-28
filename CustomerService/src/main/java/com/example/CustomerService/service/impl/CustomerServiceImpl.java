@@ -22,29 +22,32 @@ public class CustomerServiceImpl implements CustomerService {
     private CustomerDto toDto(Customer c) {
         return CustomerDto.builder()
                 .id(c.getId())
-                .firstName(c.getFirstName())
-                .lastName(c.getLastName())
+                .userId(c.getUserId())
+                .fullName(c.getFullName())
                 .email(c.getEmail())
-                .phone(c.getPhone())
+                .phoneNumber(c.getPhoneNumber())
                 .address(c.getAddress())
-                .role(c.getRole())
+                .userId(c.getUserId())
                 .build();
     }
 
-    private Customer toEntity(CustomerDto d) {
+    private Customer toEntity(CustomerDto c) {
         return Customer.builder()
-                .firstName(d.getFirstName())
-                .lastName(d.getLastName())
-                .email(d.getEmail())
-                .phone(d.getPhone())
-                .address(d.getAddress())
-                .role(d.getRole() == null ? "USER" : d.getRole())
+                .id(c.getId())
+                .userId(c.getUserId())
+                .fullName(c.getFullName())
+                .email(c.getEmail())
+                .phoneNumber(c.getPhoneNumber())
+                .address(c.getAddress())
+                .status(1)
                 .build();
     }
 
     @Override
     public CustomerDto create(CustomerDto dto) {
-        l
+        if (repo.existsByEmail(dto.getEmail())) {
+            throw new IllegalArgumentException("Email already exists");
+        }
         Customer saved = repo.save(toEntity(dto));
         return toDto(saved);
     }
@@ -52,10 +55,9 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerDto update(Long id, CustomerDto dto) {
         Customer ex = repo.findById(id).orElseThrow(() -> new IllegalArgumentException("Customer not found"));
-        ex.setFirstName(dto.getFirstName());
-        ex.setLastName(dto.getLastName());
-        ex.setPhone(dto.getPhone());
-        ex.setAddress(dto.getAddress()); // do not update email by default — or validate uniqueness
+        ex.setFullName(dto.getFullName());
+        ex.setPhoneNumber(dto.getPhoneNumber());
+        ex.setAddress(dto.getAddress());
         return toDto(repo.save(ex));
     }
 

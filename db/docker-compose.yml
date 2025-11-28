@@ -8,6 +8,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: service_auth
+      TZ: Asia/Ho_Chi_Minh
     ports:
       - "5432:5432"
     volumes:
@@ -21,6 +22,7 @@ services:
       MYSQL_DATABASE: service_customer
       MYSQL_USER: user
       MYSQL_PASSWORD: pass
+      TZ: Asia/Ho_Chi_Minh
     ports:
       - "3306:3306"
     command: --default-authentication-plugin=mysql_native_password
@@ -35,6 +37,7 @@ services:
       MARIADB_DATABASE: service_order
       MARIADB_USER: user
       MARIADB_PASSWORD: pass
+      TZ: Asia/Ho_Chi_Minh
     ports:
       - "3307:3306"
     volumes:
@@ -47,6 +50,7 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
       MONGO_INITDB_DATABASE: service_payment
+      TZ: Asia/Ho_Chi_Minh
     ports:
       - "27017:27017"
     volumes:

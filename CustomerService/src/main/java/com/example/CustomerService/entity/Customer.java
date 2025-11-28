@@ -12,19 +12,29 @@ import java.util.UUID;
 @Builder
 @Entity
 @Table(name = "customers", uniqueConstraints = {
-        @UniqueConstraint(columnNames = "email")
+        @UniqueConstraint(columnNames = "userId")
 })
 public class Customer {
 
     @Id
-    @Column(columnDefinition = "uuid", updatable = false, nullable = false)
-    private UUID id = UUID.randomUUID();
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(columnDefinition = "BIGINT")
+    private Long id;
 
-    @Column(nullable = false, length = 50)
-    private String name;
+    @Column
+    private String userId;
+
+    @Column(nullable = false, length = 255)
+    private String fullName;
 
     @Column(unique = true, nullable = false, length = 100)
     private String email;
+
+    @Column(length = 20)
+    private String phoneNumber;
+
+    @Column(length = 255)
+    private String address;
 
     @Column(nullable = false)
     private Integer status = 1;
@@ -38,5 +48,12 @@ public class Customer {
     @PreUpdate
     public void onUpdate() {
         this.updatedAt = LocalDateTime.now();
+    }
+
+    @PrePersist
+    public void onCreate() {
+        LocalDateTime now = LocalDateTime.now();
+        this.createdAt = now;
+        this.updatedAt = now;
     }
 }
