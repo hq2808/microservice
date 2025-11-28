@@ -25,8 +25,12 @@ public class AuthController {
         }
     }
 
-    @GetMapping("/gen-users")
-    public void generateUsers() {
-        authService.generateUsers();
+    @PostMapping("/login-async")
+    public ResponseEntity<?> loginAsync(@RequestBody LoginRequest req) {
+        try {
+            return ResponseEntity.ok(authService.loginAsync(req.getUsername(), req.getPassword()));
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body(Map.of("error", e.getMessage()));
+        }
     }
 }

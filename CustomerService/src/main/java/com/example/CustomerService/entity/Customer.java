@@ -1,4 +1,4 @@
-package com.example.AuthService.model;
+package com.example.CustomerService.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -6,41 +6,34 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity
-@Table(name = "users")
-public class User {
+@Table(name = "customers", uniqueConstraints = {
+        @UniqueConstraint(columnNames = "email")
+})
+public class Customer {
 
     @Id
     @Column(columnDefinition = "uuid", updatable = false, nullable = false)
     private UUID id = UUID.randomUUID();
 
-    @Column(unique = true, nullable = false)
-    private String username;
-
-    @Column(nullable = false)
-    private String passwordHash;
+    @Column(nullable = false, length = 50)
+    private String name;
 
     @Column(unique = true, nullable = false, length = 100)
     private String email;
 
     @Column(nullable = false)
-    private Integer status = 1;  // 1 = active, 0 = inactive
+    private Integer status = 1;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(nullable = false)
     private LocalDateTime updatedAt = LocalDateTime.now();
-
-    public User(String username, String passwordHash, String email) {
-        this.username = username;
-        this.email = email;
-        this.passwordHash = passwordHash;
-    }
 
     @PreUpdate
     public void onUpdate() {
