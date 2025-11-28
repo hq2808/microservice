@@ -2,9 +2,11 @@ package com.example.AuthService.service;
 
 import com.example.AuthService.model.User;
 import com.example.AuthService.repo.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -20,11 +22,15 @@ public class UserCacheService {
     @Autowired
     private UserRepository userRepository;
 
-    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+    private static final ObjectMapper mapper = new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
     public User getUser(String username) {
         Object cached = redisTemplate.opsForValue().get(PREFIX + username);
-        if (cached != null) return (User) cached;
+        if (cached != null) {
+            return mapper.convertValue(cached, User.class);
+        }
 
         return userRepository.findByUsername(username)
                 .map(user -> {
@@ -33,27 +39,4 @@ public class UserCacheService {
                 })
                 .orElse(null);
     }
-
-//    public void generateUsers() {
-//        int batchSize = 10_000;
-//        List<User> users = new ArrayList<>(batchSize);
-//        String password = encoder.encode("123456");
-//        for (int i = 30001; i <= 1_000_000; i++) {
-//            String username = "user" + i;
-//            users.add(new User(username, password));
-//            if (i % batchSize == 0) {
-//                userRepository.saveAll(users);
-//                users.clear();
-//                System.out.println("✅ Inserted " + i + " users...");
-//            }
-//        }
-//
-//        // Lưu nốt phần dư
-//        if (!users.isEmpty()) {
-//            userRepository.saveAll(users);
-//            System.out.println("✅ Inserted remaining users (" + users.size() + ")");
-//        }
-//
-//        System.out.println("🎯 Done generating 1,000,000 users!");
-//    }
 }
