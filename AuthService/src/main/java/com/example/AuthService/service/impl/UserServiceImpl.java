@@ -4,7 +4,10 @@ import com.example.AuthService.dto.RegisterUserDto;
 import com.example.AuthService.model.User;
 import com.example.AuthService.repo.UserRepository;
 import com.example.AuthService.service.UserService;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -19,22 +23,52 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private RedissonClient redissonClient;
+
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     @Override
-    public boolean create(RegisterUserDto registerUserDto) {
+    public boolean create(RegisterUserDto dto) {
+        String lockKey = "lock:user:" + dto.getUsername() + ":" + dto.getEmail();
+        RLock lock = redissonClient.getLock(lockKey);
 
-        String passwordHash = encoder.encode(registerUserDto.getPassword());
+        try {
+            // Cố gắng lấy lock, timeout = 5s, lease = 10s
+            boolean acquired = lock.tryLock(5, 10, TimeUnit.SECONDS);
+            if (!acquired) {
+                throw new IllegalStateException("Another request is registering this user, try again later");
+            }
 
-        User user = User.builder()
-                .username(registerUserDto.getUsername())
-                .email(registerUserDto.getEmail())
-                .passwordHash(passwordHash)
-                .status(1)
-                .build();
+            // Kiểm tra unique trước khi save
+            validateUniqueFields(dto);
 
-        userRepository.save(user);
-        return true;
+            // Hash password
+            String passwordHash = encoder.encode(dto.getPassword());
+
+            User user = User.builder()
+                    .username(dto.getUsername())
+                    .email(dto.getEmail())
+                    .passwordHash(passwordHash)
+                    .status(1)
+                    .build();
+
+            try {
+                userRepository.save(user);
+                return true;
+            } catch (DataIntegrityViolationException e) {
+                // Fallback cho trường hợp race condition vẫn xảy ra
+                throw e;
+            }
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // reset interrupted flag
+            throw new RuntimeException("Lock interrupted", e);
+        } finally {
+            if (lock.isHeldByCurrentThread()) {
+                lock.unlock();
+            }
+        }
     }
 
     @Override
@@ -79,5 +113,14 @@ public class UserServiceImpl implements UserService {
         }
 
         System.out.println("🎯 Done generating 1,000,000 users with multithreading!");
+    }
+
+    private void validateUniqueFields(RegisterUserDto dto) {
+        if (userRepository.existsByUsername(dto.getUsername())) {
+            throw new IllegalArgumentException("Username already exists");
+        }
+        if (userRepository.existsByEmail(dto.getEmail())) {
+            throw new IllegalArgumentException("Email already exists");
+        }
     }
 }
