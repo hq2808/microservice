@@ -1,12 +1,12 @@
-AuthService → PostgreSQL
+AuthService → PostgreSQL (MongoDB không phù hợp, vì người dùng và xác thực cần quan hệ chặt chẽ, transaction)
 
-CustomerService → MySQL
+CustomerService → MySQL (Nếu dữ liệu khách hàng có schema ổn định → MySQL tốt)
 
-ProductService → PostgreSQL
+ProductService → MongoDB (Nếu sản phẩm có nhiều thuộc tính thay đổi theo loại (size, màu, spec, feature…))
 
-OrderService → MySQL
+OrderService → MySQL (Order có quan hệ nhiều bảng, transaction quan trọng → MySQL/PostgreSQL)
 
-PaymentService → MongoDB
+PaymentService → PostgreSQL (Transaction tài chính → cần ACID, nên không dùng MongoDB)
 
 - tồn kho chỉ còn 1?
 - concurrency với các field UNIQUE như email, phone, username
