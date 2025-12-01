@@ -12,9 +12,9 @@ import java.util.UUID;
 @Builder
 @Entity
 @Table(name = "customers", uniqueConstraints = {
-        @UniqueConstraint(
-                name = "uk_customers_user_id",
-                columnNames = "user_id")
+        @UniqueConstraint(name = "uk_customers_user_id",      columnNames = "user_id"),
+        @UniqueConstraint(name = "uk_customers_email",        columnNames = "email"),
+        @UniqueConstraint(name = "uk_customers_phone_number", columnNames = "phone_number")
 })
 public class Customer {
 
@@ -32,7 +32,7 @@ public class Customer {
     @Column(unique = true, nullable = false, length = 100)
     private String email;
 
-    @Column(unique = true, nullable = false, length = 20)
+    @Column(name = "phone_number", unique = true, nullable = false, length = 20)
     private String phoneNumber;
 
     @Column(length = 255)
