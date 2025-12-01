@@ -1,5 +1,6 @@
 package com.example.common_service.exception;
 
+import com.example.common_service.exception.mapper.UniqueConstraintMapper;
 import com.example.common_service.response.ErrorResponse;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
@@ -56,8 +58,7 @@ public class ApiExceptionHandler {
     // concurrency với các field UNIQUE như email, phone, username
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<?> handleUnique(DataIntegrityViolationException ex) {
-        String message = ex.getRootCause().getMessage();
-        String niceMessage = UniqueConstraintType.resolveMessage(message);
-        return ResponseEntity.badRequest().body(niceMessage);
+        String msg = Objects.requireNonNull(ex.getRootCause()).getMessage();
+        return ResponseEntity.badRequest().body(UniqueConstraintMapper.resolve(msg));
     }
 }
