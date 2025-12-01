@@ -24,8 +24,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean create(RegisterUserDto registerUserDto) {
 
-        validateUniqueUser(registerUserDto);
-
         String passwordHash = encoder.encode(registerUserDto.getPassword());
 
         User user = User.builder()
@@ -81,14 +79,5 @@ public class UserServiceImpl implements UserService {
         }
 
         System.out.println("🎯 Done generating 1,000,000 users with multithreading!");
-    }
-
-    private void validateUniqueUser(RegisterUserDto dto) {
-        if (userRepository.existsByUsername(dto.getUsername())) {
-            throw new IllegalArgumentException("Username already exists");
-        }
-        if (userRepository.existsByEmail(dto.getEmail())) {
-            throw new IllegalArgumentException("Email already exists");
-        }
     }
 }

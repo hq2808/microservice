@@ -1,6 +1,7 @@
 package com.example.common_service.exception;
 
 import com.example.common_service.response.ErrorResponse;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -50,5 +51,13 @@ public class ApiExceptionHandler {
                 "Unexpected error: " + ex.getMessage()
         );
         return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    // concurrency với các field UNIQUE như email, phone, username
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<?> handleUnique(DataIntegrityViolationException ex) {
+        String message = ex.getRootCause().getMessage();
+        String niceMessage = UniqueConstraintType.resolveMessage(message);
+        return ResponseEntity.badRequest().body(niceMessage);
     }
 }

@@ -1,0 +1,12 @@
+AuthService → PostgreSQL
+
+CustomerService → MySQL
+
+ProductService → PostgreSQL
+
+OrderService → MySQL
+
+PaymentService → MongoDB
+
+- tồn kho chỉ còn 1?
+- concurrency với các field UNIQUE như email, phone, username
