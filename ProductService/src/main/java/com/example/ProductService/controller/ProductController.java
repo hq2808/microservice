@@ -26,7 +26,7 @@ public class ProductController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable String id) {
-        productService.deleteById(id);
+        productService.softDelete(id);
         return ResponseEntity.noContent().build();
     }
 }

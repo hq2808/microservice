@@ -1,6 +1,6 @@
 package com.example.ProductService.controller;
 
-import com.example.ProductService.model.Product;
+import com.example.ProductService.dto.ProductDto;
 import com.example.ProductService.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,14 +19,12 @@ public class PublicProductController {
     private ProductService productService;
 
     @GetMapping()
-    public ResponseEntity<List<Product>> getAll() {
+    public ResponseEntity<List<ProductDto>> getAll() {
         return ResponseEntity.ok(productService.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getById(@PathVariable String id) {
-        return productService.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<ProductDto> getById(@PathVariable String id) {
+        return ResponseEntity.ok(productService.findById(id));
     }
 }
