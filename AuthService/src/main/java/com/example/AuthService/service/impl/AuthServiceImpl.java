@@ -34,7 +34,7 @@ public class AuthServiceImpl implements AuthService {
         User u = cacheService.getUser(username);
         if (u == null) throw new IllegalArgumentException("User not found");
         if (!encoder.matches(password, u.getPasswordHash())) throw new IllegalArgumentException("Invalid password");
-        return generateToken(username);
+        return generateToken(u);
     }
 
     @Async("threadPoolTask")
@@ -49,17 +49,20 @@ public class AuthServiceImpl implements AuthService {
             return CompletableFuture.completedFuture(new LoginResponse("Invalid password"));
         }
         // 3️⃣ Generate JWT
-        String token = generateToken(username);
+        String token = generateToken(u);
 
         // 4️⃣ Return result
         return CompletableFuture.completedFuture(new LoginResponse("Success", token));
     }
 
-    private String generateToken(String username) {
+    private String generateToken(User user) {
         Date now = new Date();
         Date exp = new Date(now.getTime() + jwtExpirationMs);
+
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(user.getId().toString()) // Subject = userId
+                .claim("username", user.getUsername())
+                .claim("email", user.getEmail())
                 .setIssuedAt(now)
                 .setExpiration(exp)
                 .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes()))
