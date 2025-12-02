@@ -28,15 +28,19 @@ public class SecurityConfig extends CommonSecurityBaseConfig {
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter(jwtUtils(), whitelistProperties.getUrls());
+        return new JwtAuthenticationFilter(jwtUtils());
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> auth
-                .anyRequest().authenticated() // Các request không whitelist phải authenticate
+                // PermitAll cho whitelist
+                .requestMatchers(whitelistProperties.getUrls().toArray(new String[0])).permitAll()
+                // Các request khác phải authenticate
+                .anyRequest().authenticated()
         );
 
+        // Dùng cấu hình chung từ CommonSecurityBaseConfig (CSRF disable + JWT filter)
         return super.defaultSecurityFilterChain(http, jwtAuthenticationFilter());
     }
 }

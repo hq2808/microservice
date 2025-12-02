@@ -7,40 +7,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("api/products")
 public class ProductController {
 
     @Autowired
-    private ProductService service;
+    private ProductService productService;
 
     @PostMapping
     public ResponseEntity<Product> create(@RequestBody Product product) {
-        return ResponseEntity.ok(service.create(product));
-    }
-
-    @GetMapping
-    public ResponseEntity<List<Product>> getAll() {
-        return ResponseEntity.ok(service.findAll());
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Product> getById(@PathVariable String id) {
-        return service.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(productService.create(product));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Product> update(@PathVariable String id, @RequestBody Product product) {
-        return ResponseEntity.ok(service.update(id, product));
+        return ResponseEntity.ok(productService.update(id, product));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable String id) {
-        service.deleteById(id);
+        productService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 }
