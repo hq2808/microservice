@@ -2,7 +2,7 @@ package com.example.ProductService.service.impl;
 
 import com.example.ProductService.dto.ProductCommentDto;
 import com.example.ProductService.mapper.ProductMapper;
-import com.example.ProductService.model.ProductComment;
+import com.example.ProductService.domain.comment.ProductComment;
 import com.example.ProductService.repository.ProductCommentRepository;
 import com.example.ProductService.service.ProductCommentService;
 import lombok.RequiredArgsConstructor;

@@ -1,10 +1,9 @@
 package com.example.ProductService.service;
 
 import com.example.ProductService.dto.ProductDto;
-import com.example.ProductService.model.Product;
+import com.example.ProductService.domain.product.Product;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ProductService {
     Product create(Product product);

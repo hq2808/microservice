@@ -2,7 +2,7 @@ package com.example.ProductService.service.impl;
 
 import com.example.ProductService.dto.ProductDto;
 import com.example.ProductService.mapper.ProductMapper;
-import com.example.ProductService.model.Product;
+import com.example.ProductService.domain.product.Product;
 import com.example.ProductService.repository.ProductRepository;
 import com.example.ProductService.service.ProductService;
 import com.example.common_security.security.SecurityContextUtils;
@@ -62,7 +62,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDto findById(String id) {
-        Product product = productRepository.findByIdAndActiveTrueAndDeletedFalse(id)
+        Product product = productRepository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
         return mapper.toDto(product);
     }

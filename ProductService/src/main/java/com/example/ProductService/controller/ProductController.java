@@ -1,7 +1,7 @@
 package com.example.ProductService.controller;
 
 
-import com.example.ProductService.model.Product;
+import com.example.ProductService.domain.product.Product;
 import com.example.ProductService.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

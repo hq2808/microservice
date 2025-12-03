@@ -1,6 +1,6 @@
 package com.example.ProductService.repository;
 
-import com.example.ProductService.model.ProductComment;
+import com.example.ProductService.domain.comment.ProductComment;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

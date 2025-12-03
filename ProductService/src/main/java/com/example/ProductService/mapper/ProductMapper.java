@@ -2,8 +2,8 @@ package com.example.ProductService.mapper;
 
 import com.example.ProductService.dto.ProductCommentDto;
 import com.example.ProductService.dto.ProductDto;
-import com.example.ProductService.model.Product;
-import com.example.ProductService.model.ProductComment;
+import com.example.ProductService.domain.product.Product;
+import com.example.ProductService.domain.comment.ProductComment;
 import org.springframework.stereotype.Component;
 
 @Component

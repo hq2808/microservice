@@ -1,4 +1,4 @@
-package com.example.ProductService.model;
+package com.example.ProductService.domain.product;
 
 import lombok.Data;
 import org.springframework.data.annotation.*;

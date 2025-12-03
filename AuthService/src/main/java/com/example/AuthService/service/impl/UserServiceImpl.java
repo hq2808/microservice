@@ -37,6 +37,7 @@ public class UserServiceImpl implements UserService {
             // Cố gắng lấy lock, timeout = 5s, lease = 10s
             boolean acquired = lock.tryLock(5, 10, TimeUnit.SECONDS);
             if (!acquired) {
+                System.out.println("Another request is registering this user, try again later");
                 throw new IllegalStateException("Another request is registering this user, try again later");
             }
 
@@ -58,14 +59,17 @@ public class UserServiceImpl implements UserService {
                 return true;
             } catch (DataIntegrityViolationException e) {
                 // Fallback cho trường hợp race condition vẫn xảy ra
+                System.out.println("Fallback cho trường hợp race condition vẫn xảy ra");
                 throw e;
             }
 
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt(); // reset interrupted flag
+            System.out.println("Lock interrupted: " + e.getMessage());
             throw new RuntimeException("Lock interrupted", e);
         } finally {
             if (lock.isHeldByCurrentThread()) {
+                System.out.println("un lock");
                 lock.unlock();
             }
         }
