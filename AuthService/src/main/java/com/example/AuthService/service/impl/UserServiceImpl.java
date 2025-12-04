@@ -1,6 +1,7 @@
 package com.example.AuthService.service.impl;
 
 import com.example.AuthService.dto.RegisterUserDto;
+import com.example.AuthService.exception.TooManyRequestsException;
 import com.example.AuthService.model.User;
 import com.example.AuthService.repo.UserRepository;
 import com.example.AuthService.service.UserService;
@@ -38,7 +39,7 @@ public class UserServiceImpl implements UserService {
             boolean acquired = lock.tryLock(5, 10, TimeUnit.SECONDS);
             if (!acquired) {
                 System.out.println("Another request is registering this user, try again later");
-                throw new IllegalStateException("Another request is registering this user, try again later");
+                throw new TooManyRequestsException("User đang được đăng ký, thử lại sau");
             }
 
             // Kiểm tra unique trước khi save

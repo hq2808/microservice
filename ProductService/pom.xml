@@ -74,18 +74,6 @@
 			<version>0.0.1</version>
 		</dependency>
 
-<!--		&lt;!&ndash; BẮT BUỘC — để dùng SecurityAnnotationScanners &ndash;&gt;-->
-<!--		<dependency>-->
-<!--			<groupId>org.springframework.security</groupId>-->
-<!--			<artifactId>spring-security-config</artifactId>-->
-<!--		</dependency>-->
-
-<!--		&lt;!&ndash; Cần để dùng SecurityFilterChain, UserDetails... &ndash;&gt;-->
-<!--		<dependency>-->
-<!--			<groupId>org.springframework.security</groupId>-->
-<!--			<artifactId>spring-security-web</artifactId>-->
-<!--		</dependency>-->
-
 		<!-- JWT parser (nếu dùng jjwt) -->
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>

@@ -5,7 +5,6 @@ import com.example.ProductService.mapper.ProductMapper;
 import com.example.ProductService.domain.product.Product;
 import com.example.ProductService.repository.ProductRepository;
 import com.example.ProductService.service.ProductService;
-import com.example.common_security.security.SecurityContextUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +20,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product create(Product product) {
-        product.setCreatedBy(SecurityContextUtils.getUserId());
         product.setVersion(1);
         product.setDeleted(false);
         product.setSku(UUID.randomUUID().toString());
@@ -46,7 +44,6 @@ public class ProductServiceImpl implements ProductService {
         newVersion.setImages(updatedProduct.getImages());
         newVersion.setVersion(oldProduct.getVersion() + 1);
         newVersion.setCreatedBy(oldProduct.getCreatedBy());
-        newVersion.setUpdatedBy(SecurityContextUtils.getUserId());
         newVersion.setDeleted(false);
 
         return productRepository.save(newVersion);

@@ -1,11 +1,14 @@
 package com.example.ProductService.domain.product;
 
+import lombok.Builder;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.*;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
+@Builder
 @Data
 public class ProductVariant {
 
@@ -22,4 +25,16 @@ public class ProductVariant {
 
     private boolean active = true;
     private int version = 1;
+
+    @CreatedBy
+    private String createdBy;
+
+    @LastModifiedBy
+    private String updatedBy;
+
+    @CreatedDate
+    private Instant createdAt;
+
+    @LastModifiedDate
+    private Instant updatedAt;
 }
